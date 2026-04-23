@@ -102,8 +102,8 @@ def main():
     # Testing Numeric Processor
     print("\nTesting Numeric Processor...")
     print(f"Trying to validate input '42': {numProcessor.validate(42)}")
-    print(f"Trying to validate input 'Hello': "
-          f"{numProcessor.validate("Hello")}")
+    print("Trying to validate input 'Hello': "
+          f"{numProcessor.validate('Hello')}")
     print("Test invalid ingestion of string 'foo' without prior validation:")
     try:
         numProcessor.ingest("foo")
@@ -129,7 +129,7 @@ def main():
     # Testing Log Processor
     print("\nTesting Log Processor...")
     print(f"Trying to validate input 'Hello': "
-          f"{logProcessor.validate("Hello")}")
+          f"{logProcessor.validate('Hello')}")
     logProcessor.validate([{'log_level': 'NOTICE',
                             'log_message': 'Connection to server'},
                            {'log_level': 'ERROR',
