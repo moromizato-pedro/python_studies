@@ -10,46 +10,41 @@ def read_file(file_name: str) -> None:
     print()
     content = file.read()
     print(content)
-    print()
     print("---")
     file.close()
 
 
-def transform_data(file_name: str):
+def transform_data(file_name: str) -> list[str]:
     file = open(file_name, 'r')
     lines = file.readlines()
     lines = [line.replace('\n', "#\n") for line in lines]
-    lines[-1] += '#'
     file.close()
-    file = open(file_name, 'w+')
-    file.writelines(lines)
-    file.close()
-    read_file(file_name)
+    print("---")
+    print()
+    [print(line, end='') for line in lines]
+    print("\n---")
+    return lines
 
 
-def rename_file(old_name: str, new_name: str) -> None:
-    if not new_name:
+def save_content(content: list[str], file_name: str) -> None:
+    if not file_name:
         print("Not saving data.")
         return
-    print(f"Saving data to {new_name}")
-    file = open(old_name, 'r')
-    content = file.read()
+    print(f"Saving data to '{file_name}'")
+    file = open(file_name, 'w')
+    file.writelines(content)
     file.close()
-    file = open(new_name, 'w')
-    file.write(content)
-    file.close()
-    print(f"Data saved in file {new_name}.")
-
+    print(f"Data saved in file '{file_name}'.")
 
 
 def main():
-    print("=== Cyber Archives Recovery ===")
+    print("=== Cyber Archives Recovery & Preservation ===")
     try:
         if len(sys.argv) != 2:
-            print("Usage: ft_ancient_text.py <file>")
+            print("Usage: ft_archive_creation.py <file>")
             print()
             return
-        
+
         #
         print(f"Accessing file '{sys.argv[1]}'")
         read_file(sys.argv[1])
@@ -58,12 +53,12 @@ def main():
 
         #
         print("Transform data:")
-        transform_data(sys.argv[1])
+        content = transform_data(sys.argv[1])
         print()
 
         #
-        new_name = input("Enter new file name (or empty):")
-        rename_file(sys.argv[1], new_name)
+        file_name = input("Enter new file name (or empty):")
+        save_content(content, file_name)
 
     except (FileNotFoundError, PermissionError, IsADirectoryError,
             IOError, OSError, UnicodeEncodeError, MemoryError) as err:

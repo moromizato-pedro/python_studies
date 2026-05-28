@@ -4,13 +4,13 @@ import sys
 import typing
 
 
-def read_file(file: typing.IO) -> None:
-    print(f"Accessing file '{file.name}'")
+def read_file(file_name: str) -> None:
+    print(f"Accessing file '{file_name}'")
+    file = open(file_name, 'r')
     print("---")
     print()
     content = file.read()
     print(content)
-    print()
     print("---")
     file.close()
     print(f"File '{file.name}' closed.")
@@ -23,8 +23,7 @@ def main():
             print("Usage: ft_ancient_text.py <file>")
             print()
             return
-        file = open(sys.argv[1], 'r')
-        read_file(file)
+        read_file(sys.argv[1])
     except (FileNotFoundError, PermissionError, IsADirectoryError,
             IOError, OSError, UnicodeEncodeError, MemoryError) as err:
         print(f"Error opening file '{sys.argv[1]}': {err}")
