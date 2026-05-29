@@ -1,36 +1,32 @@
 #!/usr/bin/env python3
 
 
-def secure_archive(file_name: str, operation: int, content: str="") -> tuple[bool, str]:
-    write = 0
-    read = 1
+def secure_archive(file_name: str, write: int = 0,
+                   content: str = "") -> tuple[bool, str]:
     try:
-        if operation == read:
+        if not write:
             with open(file_name, "r") as f:
                 content = f.read()
-                return (True, content)
-        elif operation == write:
+        else:
             with open(file_name, "w") as f:
                 f.write(content)
-                return (True, "Content successfully written to file")
-    except OSError as err:
+        return (True, content)
+    except (FileNotFoundError, PermissionError) as err:
         return (False, str(err))
 
 
-
-def main():
-    write = 0
-    read = 1
+def main() -> None:
+    write = 1
     print("=== Cyber Archives Security ===")
     #
     print("\nUsing 'secure_archive' to read from a nonexistent file:")
-    print(secure_archive("/not/existing/file", read))
+    print(secure_archive("/not/existing/file"))
     #
     print("\nUsing 'secure_archive' to read from an inaccessible file:")
-    print(secure_archive("old_fragment.txt", read))
+    print(secure_archive("old_fragment.txt"))
     #
     print("\nUsing 'secure_archive' to read from a regular file:")
-    result = secure_archive("ancient_fragment.txt", read)
+    result = secure_archive("ancient_fragment.txt")
     print(result)
     #
     print("\nUsing 'secure_archive' to write previous content to a new file:")

@@ -1,90 +1,84 @@
 #!/usr/bin/env python3
 
 import sys
-import typing
 
 
-def read_file(file_name: str) -> None:
-    file = None
+def read_file(file_name: str) -> str:
+    f = None
+    content = ""
     try:
-        file = open(file_name, 'r')
-        content = file.read()
+        f = open(file_name)
+        content = f.read()
+        print("---")
+        print()
         print(content)
+        print()
+        print("---")
     finally:
-        if file is not None:
-            file.close()
+        if f is not None:
+            f.close()
+    return content
 
 
-def transform_data(file_name: str) -> list[str]:
-    file = None
+def transform_data(content: str) -> str:
+    lines = [line + '#' for line in content.split('\n')]
+    return '\n'.join(lines)
+
+
+def save_file(new_name: str, content: str) -> None:
+    f = None
     try:
-        file = open(file_name, 'r')
-        lines = file.readlines()
-        lines = [line.replace('\n', "#\n") for line in lines]
-        lines[-1] += '#'
-        return lines
+        f = open(new_name, 'w')
+        f.write(content)
     finally:
-        if file is not None:
-            file.close()
+        if f is not None:
+            f.close()
 
 
-def save_content(content: list[str], file_name: str) -> bool:
-    if not file_name:
+def main() -> None:
+    print("=== Cyber Archives Recovery & Preservation ===")
+    if len(sys.argv) != 2:
+        print("Usage: ft_ancient_text.py <file>")
+        print()
+        return
+
+    print(f"Accessing file '{sys.argv[1]}'")
+    try:
+        content = read_file(sys.argv[1])
+    except (FileNotFoundError, PermissionError) as err:
+        print(f"[STDERR] Error opening file "
+              f"'{sys.argv[1]}': {err}", file=sys.stderr)
+        return
+    print(f"File '{sys.argv[1]}' closed.")
+    print()
+
+    print("Transform data:")
+    print("---")
+    print()
+    content = transform_data(content)
+    print(content)
+    print()
+    print("---")
+    print()
+
+    new_name = None
+    print("Enter new file name (or empty):", end=' ', flush=True)
+    try:
+        file = open(sys.stdin.fileno())
+        new_name = file.readline().strip('\n')
+    except (EOFError, KeyboardInterrupt):
+        print("\nInput canceled.")
+    if not new_name:
         print("Not saving data.")
         return
-    print(f"Saving data to {file_name}")
-    file = None
+    print(f"Saving data to {new_name}")
     try:
-        file = open(file_name, 'w')
-        file.writelines(content)
-        print(f"Data saved in file {file_name}.")
-    except OSError as err:
-        print(f"[STDERR] Error opening file '{file_name}': {err}", file=sys.stderr)
-        print("Data was not saved.")
-    finally:
-        if file is not None:
-            file.close()
-
-
-def main():
-    print("=== Cyber Archives Recovery ===")
-    try:
-        if len(sys.argv) != 2:
-            print("Usage: ft_ancient_text.py <file>")
-            print()
-            return
-
-        #
-        print(f"Accessing file '{sys.argv[1]}'")
-        print("---")
-        print()
-        read_file(sys.argv[1])
-        print()
-        print("---")
-        print(f"File '{sys.argv[1]}' closed.")
-        print()
-
-        #
-        print("Transform data:")
-        print("---")
-        print()
-        content = transform_data(sys.argv[1])
-        [print(line, end='') for line in content]
-        print()
-        print("\n---")
-        print()
-
-        #
-        file_name = input("Enter new file name (or empty):")
-        try:
-            save_content(content, file_name)
-        except OSError as err:
-            print(f"[STDERR] Error opening file '{sys.argv[1]}': {err}", file=sys.stderr)
-            print("Data not saved.")
-    except OSError as err:
-        print(f"[STDERR] Error opening file '{sys.argv[1]}': {err}", file=sys.stderr)
-    except Exception as err:
-        print(f"[STDERR] An unexpected error occurred: {err}", file=sys.stderr)
+        save_file(new_name, content)
+        print(f"Data saved in file {new_name}.")
+    except (FileNotFoundError, PermissionError) as err:
+        print(f"[STDERR] Error opening file "
+              f"'{new_name}': {err}", file=sys.stderr)
+        print("Data not saved.")
     print()
 
 
