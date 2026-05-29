@@ -1,9 +1,6 @@
-from string import capwords
-
-
 def ft_seed_inventory(seed_type: str, quantity: int, unit: str) -> None:
-    message = None
-    seed = f"{capwords(seed_type)} seeds: "
+    message: str = ""
+    seed = f"{(seed_type).capitalize()} seeds: "
     if unit == "packets":
         message = f"{quantity} {unit} available"
     elif unit == "grams":

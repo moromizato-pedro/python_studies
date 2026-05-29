@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 class Plant:
-    def __init__(self, name, height, age, period=1, growth=0.8):
+    def __init__(self, name: str, height: float, age: int, period: int = 1,
+                 growth: float = 0.8) -> None:
         self.name = name
         self.height = height
         self.age_days = age
@@ -18,16 +19,17 @@ class Plant:
         self.age_days += self.period
 
 
-def main():
+def main() -> None:
     plants = []
     plants.append(Plant("Rose", 25.0, 30))
     initial_height = plants[0].height
     print("=== Garden Plant Growth ===")
+    plants[0].show()
     for day in range(1, 8):
         print(f"=== Day {day} ===")
-        plants[0].show()
         plants[0].grow()
         plants[0].age()
+        plants[0].show()
     print(f"Growth this week: {plants[0].height - initial_height:.1f}cm")
 
 

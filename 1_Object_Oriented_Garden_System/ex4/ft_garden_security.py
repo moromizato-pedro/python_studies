@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 class Plant:
-    def __init__(self, name, height, age, period=1, growth=0.8):
+    def __init__(self, name: str, height: float, age: int, period: int = 1,
+                 growth: float = 0.8) -> None:
         self.name = name
         self._height = height
         self._age = age
@@ -21,7 +22,7 @@ class Plant:
     def get_age(self) -> int:
         return self._age
 
-    def get_height(self) -> int:
+    def get_height(self) -> float:
         return self._height
 
 #   Setters
@@ -42,7 +43,7 @@ class Plant:
             print("Height update rejected")
 
 
-def main():
+def main() -> None:
     plant = Plant("Rose", 15, 10)
 
 #   ===========================

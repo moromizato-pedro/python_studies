@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 class Plant:
-    def __init__(self, name, height, age, period: int = 1,
-                 growth: float = 0.8):
+    def __init__(self, name: str, height: float, age: int, period: int = 1,
+                 growth: float = 0.8) -> None:
         self.name = name
         self._height = height
         self._age = age
@@ -22,7 +22,7 @@ class Plant:
     def get_age(self) -> int:
         return self._age
 
-    def get_height(self) -> int:
+    def get_height(self) -> float:
         return self._height
 
 #   Setters
@@ -44,8 +44,9 @@ class Plant:
 
 
 class Flower(Plant):
-    def __init__(self, name, height, age, color: str,
-                 period=1, growth=0.8, bloom: bool = False) -> None:
+    def __init__(self, name: str, height: float, age: int, color: str,
+                 period: int = 1, growth: float = 0.8,
+                 bloom: bool = False) -> None:
         super().__init__(name, height, age, period, growth)
         self.color = color
         self.has_bloomed = bloom
@@ -65,8 +66,9 @@ class Flower(Plant):
 
 
 class Tree(Plant):
-    def __init__(self, name, height, age, trunk_diameter: float,
-                 period=1, growth=0.8) -> None:
+    def __init__(self, name: str, height: float, age: int,
+                 trunk_diameter: float, period: int = 1,
+                 growth: float = 0.8) -> None:
         super().__init__(name, height, age, period, growth)
         self.trunk_diameter = trunk_diameter
 
@@ -81,8 +83,9 @@ class Tree(Plant):
 
 
 class Vegetable(Plant):
-    def __init__(self, name, height, age, harvest_season: str,
-                 nutritional_value: int, period=1, growth=2.1) -> None:
+    def __init__(self, name: str, height: float, age: int,
+                 harvest_season: str, nutritional_value: int, period: int = 1,
+                 growth: float = 2.1) -> None:
         super().__init__(name, height, age, period, growth)
         self.harvest_season = harvest_season
         self.nutritional_value = nutritional_value
@@ -100,7 +103,7 @@ class Vegetable(Plant):
             self.nutritional_value += 1
 
 
-def main():
+def main() -> None:
     flower = Flower("Rose", 15.0, 10, "red")
     tree = Tree("Oak", 200.0, 365, 5.0)
     vegetable = Vegetable("Tomato", 5.0, 10, "April", 0)

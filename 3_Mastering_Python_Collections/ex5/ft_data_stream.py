@@ -45,24 +45,38 @@ def gen_event() -> Generator[tuple[str, str], None, None]:
         yield (random.choice(players), random.choice(actions))
 
 
-def consume_event(events: list) -> Generator[tuple[str, str], None, None]:
+def consume_event(events: list[tuple[str, str]]) -> Generator[tuple[str, str],
+                                                              None, None]:
     while len(events) > 0:
         selected = random.choice(events)
         events.remove(selected)
         yield selected
 
 
-def main():
+def break_everything_or_not(n: int):
+    numbers = []
+    for i in range(n):
+        # yield i
+        numbers.append(i)
+    return numbers
+
+
+def main() -> None:
     print("=== Game Data Stream Processor ===")
     gen = gen_event()
     for i in range(1000):
         player, action = next(gen)
         print(f"Event {i}: Player {player} did action {action}")
-    events_10 = [next(gen) for _ in range(10)]
+    events_10: list[tuple[str, str]] = []
+    for _ in range(10):
+        events_10.append(next(gen))
     print(f"Built list of 10 events: {events_10}")
     for event in consume_event(events_10):
         print(f"Got event from list: {event}")
         print(f"Remains in list: {events_10}")
+    n = int(input("N value: "))
+    for i in break_everything_or_not(n):
+        print(i)
 
 
 if __name__ == "__main__":

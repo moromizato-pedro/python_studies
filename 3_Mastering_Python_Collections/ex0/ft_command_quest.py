@@ -3,16 +3,7 @@
 import sys
 
 
-#   Using range()
-#   arg_count = len(sys.argv)
-#   if arg_count - 1 > 0
-#       print(f"Arguments received: {arg_count - 1}")
-#       for i in range(1, arg_count):
-#           print(f"Argument {i}: {sys.argv[i]}")
-#   Using negative index
-#       for arg in sys.argv[-arg_count:]:
-#           print(f"Argument {i}: {sys.argv[i]}")
-def main():
+def main() -> None:
     print("=== Command Quest ===")
     print(f"Program name: {sys.argv[0]}")
     if len(sys.argv[1:]) > 0:

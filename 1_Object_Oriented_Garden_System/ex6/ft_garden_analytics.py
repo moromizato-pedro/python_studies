@@ -2,7 +2,7 @@
 
 class Plant:
     def __init__(self, name: str, height: float, age: int, period: int = 1,
-                 growth: float = 0.8):
+                 growth: float = 0.8) -> None:
         self.name = name
         self._height = height
         self._age = age
@@ -47,7 +47,7 @@ class Plant:
             print("Height update rejected")
 
     @staticmethod
-    def is_older_1_year(days: int):
+    def is_older_1_year(days: int) -> None:
         print(f"Is {days} days more than a year? -> ", end='')
         if days > 365:
             print("True")
@@ -55,10 +55,10 @@ class Plant:
             print("False")
 
     @classmethod
-    def Anonymous(cls):
+    def Anonymous(cls) -> "Plant":
         return cls("Unknown plant", 0.0, 0, 0, 0.0)
 
-#   Subclasses
+#   Inner Classes
     class Stats:
         def __init__(self, growed: int, aged: int, showed: int,
                      shades_produced: int) -> None:
@@ -132,7 +132,7 @@ class Tree(Plant):
 
 class Seed(Flower):
     def __init__(self, name: str, height: float, age: int, color: str,
-                 period: int = 1, growth: float = 0.8, bloom=False,
+                 period: int = 1, growth: float = 0.8, bloom: bool = False,
                  seed_quantity: int = 0, seeds: int = 0) -> None:
         super().__init__(name, height, age, color, period, growth, bloom)
         self.seeds = seeds
@@ -155,54 +155,47 @@ def show_statistics(plant: Plant) -> None:
         print(f" {plant.stats.get_shades_produced()} shade")
 
 
-def main():
-    garden = []
-    garden.append(Flower("Rose", 15.0, 10, "red", growth=8.0))
-    garden.append(Tree("Oak", 200.0, 365, 5.0))
-    garden.append(Seed("Sunflower", 80.0, 45, "yellow", 20, 30.0,
-                       seed_quantity=42))
-    garden.append(Plant.Anonymous())
+def main() -> None:
+    flower = Flower("Rose", 15.0, 10, "red", growth=8.0)
+    tree = Tree("Oak", 200.0, 365, 5.0)
+    seed = Seed("Sunflower", 80.0, 45, "yellow", 20, 30.0,
+                seed_quantity=42)
+    anonymous = Plant.Anonymous()
     print("=== Garden statistics ===")
 
 #   ===========================
-    print("== Check year-old")
+    print("=== Check year-old")
     Plant.is_older_1_year(30)
     Plant.is_older_1_year(400)
 
-    for plant in garden:
-        plant_type = type(plant).__name__
+    print("\n=== Flower")
+    flower.show()
+    show_statistics(flower)
+    print("[asking the rose to grow and bloom]")
+    flower.bloom()
+    flower.grow()
+    flower.show()
+    show_statistics(flower)
 
-        # Title
-        if (plant_type == "Plant"):
-            print("\n=== Anonymous")
-        else:
-            print(f"\n=== {plant_type}")
+    print("\n=== Tree")
+    tree.show()
+    show_statistics(tree)
+    print(f"[asking the {tree.name.lower()} to produce shade]")
+    tree.produce_shade()
+    show_statistics(tree)
 
-        # Initial Information
-        plant.show()
+    print("\n=== Seed")
+    seed.show()
+    print(f"[make {seed.name.lower()} grow, age and bloom]")
+    seed.grow()
+    seed.age()
+    seed.bloom()
+    seed.show()
+    show_statistics(seed)
 
-        # Initial Statistics
-        if (plant_type not in ["Plant", "Seed"]):
-            show_statistics(plant)
-
-        # Applying Modifications
-        if (plant_type == "Flower"):
-            print("[asking the rose to grow and bloom]")
-            plant.bloom()
-            plant.grow()
-            plant.show()
-        elif (plant_type == "Tree"):
-            print("[asking the oak to produce shade]")
-            plant.produce_shade()
-        elif (plant_type == "Seed"):
-            print("[make sunflower grow, age and bloom]")
-            plant.grow()
-            plant.age()
-            plant.bloom()
-            plant.show()
-
-        # Final Statistics
-        show_statistics(plant)
+    print("\n=== Anonymous")
+    anonymous.show()
+    show_statistics(anonymous)
 
 
 if __name__ == "__main__":
