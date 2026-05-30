@@ -37,13 +37,12 @@ class NumericProcessor(DataProcessor):
         else:
             return False
 
-    def ingest(self, data: Any) -> None:
+    def ingest(self, data: int | float | list[int | float]) -> None:
         if not self.validate(data):
-            raise TypeError(f"Invalid data type: '{data}' is {type(data)}, "
-                            "expected (<int> | <float> | <list[int | float]>)")
+            raise TypeError("Improper numeric data")
         print(f"Processing data: {data}")
         for rank, number in zip(range(len(data)), data):
-            self.queue[rank] = number
+            self.queue[rank] = str(number)
 
 
 class TextProcessor(DataProcessor):
@@ -108,7 +107,7 @@ def main():
     try:
         numProcessor.ingest("foo")
     except TypeError as err:
-        print(err)
+        print(f"Got exception: {err}")
     numProcessor.validate([1, 2, 3, 4, 5])
     numProcessor.ingest([1, 2, 3, 4, 5])
     print("Extracting 3 values...")
