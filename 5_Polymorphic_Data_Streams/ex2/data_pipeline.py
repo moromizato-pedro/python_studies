@@ -1,14 +1,13 @@
 #!/usr/bin/python3
 
-import abc
-import typing
+from abc import ABC, abstractmethod
+from typing import Any, Protocol
 
 
 # Plugins
-class ExportPlugin(typing.Protocol):
-    @abc.abstractmethod
+class ExportPlugin(Protocol):
     def process_output(self, data: list[tuple[int, str]]) -> None:
-        pass
+        ...
 
 
 class CSVPlugin(ExportPlugin):
@@ -26,127 +25,132 @@ class JSONPlugin(ExportPlugin):
         print('{' + values + '}')
 
 
-#   Processors
-class DataProcessor(abc.ABC):
-    def __init__(self):
+class DataProcessor(ABC):
+    def __init__(self) -> None:
         super().__init__()
-        self.queue = {}
-        self.rank = 0
-        self.processed = 0
-        self.remaining = 0
+        self.queue: dict[int, Any] = {}
+        self.processed: int = 0
+        self.remaining: int = 0
+        self.id: int = 0
 
-    @abc.abstractmethod
-    def validate(self, data: typing.Any) -> bool:
+    @abstractmethod
+    def validate(self, data: Any) -> bool:
         pass
 
-    @abc.abstractmethod
-    def ingest(self, data: typing.Any) -> None:
+    @abstractmethod
+    def ingest(self, data: Any) -> None:
         pass
 
     # Outputs ingested data
     def output(self) -> tuple[int, str]:
-        rank, value = list(self.queue.items())[0]
-        self.queue.pop(rank)
+        oldest = min(self.queue.keys())
+        value = self.queue.pop(oldest)
         self.remaining -= 1
-        return (rank, str(value))
+        return (oldest, value)
 
-    def register_process(self, data: typing.Any) -> None:
-        self.queue[self.rank] = data
-        self.rank += 1
+    def register_process(self, data: str) -> None:
+        self.queue[self.id] = data
+        self.id += 1
         self.processed += 1
         self.remaining += 1
 
 
 class NumericProcessor(DataProcessor):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def validate(self, data: typing.Any) -> bool:
-        is_valid = True
+    def validate(self, data: Any) -> bool:
         if isinstance(data, (int, float, list)):
             if isinstance(data, list):
-                is_valid = all(isinstance(x, (int, float)) for x in data)
-            return is_valid
-        else:
-            return False
+                return all(isinstance(x, (int, float)) for x in data)
+            else:
+                return True
+        return False
 
-    def ingest(self, data: typing.Any) -> None:
+    def ingest(self, data: int | float | list[int | float]) -> None:
         if not self.validate(data):
-            raise TypeError(f"Invalid data type: '{data}' is {type(data)}, "
-                            "expected (<int> | <float> | <list[int | "
-                            "float]>)")
-        if isinstance(data, (str, list)):
-            for number in data:
-                self.register_process(number)
+            raise ValueError("Improper numeric data")
+        if isinstance(data, list):
+            for value in data:
+                # self.queue[self.id] = str(value)
+                # self.id += 1
+                self.register_process(str(value))
         else:
-            self.register_process(data)
+            # self.queue[self.id] = str(data)
+            # self.id += 1
+            self.register_process(str(data))
 
 
 class TextProcessor(DataProcessor):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def validate(self, data: typing.Any) -> bool:
-        is_valid = True
+    def validate(self, data: Any) -> bool:
         if isinstance(data, (str, list)):
             if isinstance(data, list):
                 is_valid = all(isinstance(x, str) for x in data)
-            return is_valid
+                return is_valid
+            return True
         else:
             return False
 
-    def ingest(self, data: typing.Any) -> None:
+    def ingest(self, data: str | list[str]) -> None:
         if not self.validate(data):
-            raise TypeError(f"Invalid data type: '{data}' is {type(data)}, "
-                            "expected <str>")
+            raise ValueError("Improper text data")
         if isinstance(data, list):
             for text in data:
-                self.register_process(text)
+                # self.queue[self.id] = text
+                # self.id += 1
+                self.register_process(str(text))
         else:
-            self.register_process(data)
+            # self.queue[self.id] = data
+            # self.id += 1
+            self.register_process(str(data))
 
 
 class LogProcessor(DataProcessor):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def validate(self, data: typing.Any) -> bool:
+    def validate(self, data: Any) -> bool:
         valid = False
         if isinstance(data, dict):
             valid = self.is_valid(data)
         elif isinstance(data, list):
-            valid = all(self.is_valid(dictionary) for dictionary in data)
+            valid = all(self.is_valid(item) for item in data)
         return valid
 
-    def ingest(self, data: typing.Any) -> None:
+    def ingest(self, data: dict[str, str] | list[dict[str, str]]) -> None:
         if not self.validate(data):
-            raise TypeError(f"Invalid data type: '{data}' is {type(data)}, "
-                            "expected (<dict>, <list[dict]>)")
+            raise ValueError("Improper log data")
         if isinstance(data, list):
             for log in data:
-                self.register_process(f"{log['log_level']}: "
-                                      f"{log['log_message']}")
+                output = f"{log['log_level']}: {log['log_message']}"
+                # self.queue[self.id] = output
+                # self.id += 1
+                self.register_process(output)
         else:
-            self.register_process(f"{data['log_level']}: "
-                                  f"{data['log_message']}")
+            output = f"{data['log_level']}: {data['log_message']}"
+            # self.queue[self.id] = output
+            # self.id += 1
+            self.register_process(output)
 
-    def is_valid(self, data: dict) -> bool:
+    def is_valid(self, data: dict[str, str]) -> bool:
         return all(isinstance(key, str) and
                    isinstance(value, str) for key, value in data.items())
 
 
-# Stream
 class DataStream():
-    def __init__(self):
-        self.processors = []
+    def __init__(self) -> None:
+        self.processors: list[DataProcessor] = []
 
     def register_processor(self, proc: DataProcessor) -> None:
-        if proc in self.processors:
+        if type(proc) in [type(processor) for processor in self.processors]:
             pass
         else:
             self.processors.append(proc)
 
-    def process_stream(self, stream: list[typing.Any]) -> None:
+    def process_stream(self, stream: list[Any]) -> None:
         for element in stream:
             processor_selected = None
             try:
@@ -179,11 +183,7 @@ class DataStream():
             plugin.process_output(processes)
 
 
-def main():
-    def run_task(proc: DataProcessor, cycles: int) -> None:
-        for _ in range(cycles):
-            proc.output()
-
+def main() -> None:
     #
     numProcessor = NumericProcessor()
     textProcessor = TextProcessor()
