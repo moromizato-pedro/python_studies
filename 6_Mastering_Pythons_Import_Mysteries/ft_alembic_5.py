@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-
 from alchemy import create_air
 
 
-def main():
+def main() -> None:
     print("=== Alembic 5 ===")
     print("Accessing the alchemy module using 'from alchemy import ...'")
     print(f"Testing create_air: {create_air()}")

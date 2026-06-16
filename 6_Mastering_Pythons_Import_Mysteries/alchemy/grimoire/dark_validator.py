@@ -1,8 +1,9 @@
-import alchemy.grimoire as grim
+from .dark_spellbook import dark_spell_allowed_ingredients
+
 
 def validate_ingredients(ingredients: str) -> str:
     is_valid = "INVALID"
-    for ingredient in grim.dark_spellbook.dark_spell_allowed_ingredients():
+    for ingredient in dark_spell_allowed_ingredients():
         if ingredients.lower().find(ingredient) != -1:
             is_valid = "VALID"
             break
