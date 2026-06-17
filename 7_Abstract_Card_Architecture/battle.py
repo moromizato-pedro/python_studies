@@ -5,6 +5,9 @@ from ex0 import Creature, FactoryError
 
 
 class InvalidFactory(CreatureFactory):
+    def __init__(self) -> None:
+        super().__init__("Invalid")
+
     def create_base(self) -> Creature:
         return None  # type: ignore
 
@@ -13,18 +16,20 @@ class InvalidFactory(CreatureFactory):
 
 
 def test_factory(factory: CreatureFactory) -> None:
+    ident = "    "
     creation_function = {"Base": factory.create_base,
                          "Evolved": factory.create_evolved}
-    try:
-        for creature_type, function in creation_function.items():
+    for creature_type, function in creation_function.items():
+        try:
             creature = function()
             if not isinstance(creature, Creature):
+                print(f"{ident}", end='')
                 raise FactoryError(f"Couldn't create '{creature_type} "
                                    f"Creature' for '{type(factory).__name__}'")
             print(creature.describe())
             print(creature.attack())
-    except FactoryError as err:
-        print(f"FactoryError found: {err}")
+        except FactoryError as err:
+            print(f"FactoryError found: {err}")
 
 
 def test_battle(fire_factory: FlameFactory, aqua_factory: AquaFactory) -> None:
@@ -42,7 +47,6 @@ def main() -> None:
     fire_factory = FlameFactory()
     water_factory = AquaFactory()
     t_factory = InvalidFactory()
-    ident = "    "
 
     print("Testing factory")
     test_factory(fire_factory)
@@ -51,7 +55,6 @@ def main() -> None:
     test_factory(water_factory)
     print()
     print("Testing invalid factory:")
-    print(f"{ident}", end='')
     test_factory(t_factory)
 
     print("------------------------")

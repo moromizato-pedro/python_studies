@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 
+#   Abstract Product
 class Creature(ABC):
     def __init__(self, name: str, type: str) -> None:
         self.name = name
@@ -15,6 +16,7 @@ class Creature(ABC):
         return description
 
 
+#   Concrete Products
 class Flameling(Creature):
     def __init__(self) -> None:
         super().__init__("Flameling", "Fire")

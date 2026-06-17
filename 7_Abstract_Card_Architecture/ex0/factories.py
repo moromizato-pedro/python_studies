@@ -7,7 +7,10 @@ class FactoryError(Exception):
         super().__init__(message)
 
 
+#   Abstract Factory
 class CreatureFactory(ABC):
+    def __init__(self, name: str) -> None:
+        self.name = name
 
     @abstractmethod
     def create_base(self) -> Creature:
@@ -18,7 +21,10 @@ class CreatureFactory(ABC):
         pass
 
 
+#   Concrete Factories
 class FlameFactory(CreatureFactory):
+    def __init__(self) -> None:
+        super().__init__("Flame")
 
     def create_base(self) -> Creature:
         return Flameling()
@@ -28,6 +34,8 @@ class FlameFactory(CreatureFactory):
 
 
 class AquaFactory(CreatureFactory):
+    def __init__(self) -> None:
+        super().__init__("Aqua")
 
     def create_base(self) -> Creature:
         return Aquabub()

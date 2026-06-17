@@ -4,6 +4,9 @@ from ex1 import HealCapability, TransformCapability
 
 
 class InvalidFactory(CreatureFactory):
+    def __init__(self) -> None:
+        super().__init__("Invalid")
+
     def create_base(self) -> Creature:
         return None  # type: ignore
 
