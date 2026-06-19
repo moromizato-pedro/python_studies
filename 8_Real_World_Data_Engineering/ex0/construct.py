@@ -5,6 +5,10 @@ import os
 
 
 def warn_global_environment() -> None:
+    """
+        Tell user that it is not in a venv and instruct to
+        create a new one
+    """
     print("MATRIX STATUS: You're still plugged in")
     print()
     print(f"Current Python: {os.path.realpath(sys.executable)}")
@@ -15,13 +19,17 @@ def warn_global_environment() -> None:
     print()
     print("To enter the construct, run:")
     print("python3 -m venv matrix_env")
-    print("source matrix_env/bin/activate # On Unix")
-    print("matrix_env\\Scripts\\activate # On Windows")
+    print("source matrix_env/bin/activate   # On Unix")
+    print("matrix_env\\Scripts\\activate    # On Windows")
     print()
     print("Then run this program again.")
 
 
 def show_construct() -> None:
+    """
+        Tell user that it is in a venv and present information
+        about the environment
+    """
     print("MATRIX STATUS: Welcome to the construct")
     print()
     print(f"Current Python: {sys.executable}")
